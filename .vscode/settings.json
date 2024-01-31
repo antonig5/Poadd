@@ -1,0 +1,7 @@
+{
+  "gitlens.ai.experimental.openai.model": "gpt-3.5-turbo",
+  "docker.commands.build": "${containerCommand} build --pull --rm -f \"${dockerfile}\" -t ${tag} \"${context}\"",
+  "rest-client.environmentVariables": {
+    "$shared": {}
+  }
+}
