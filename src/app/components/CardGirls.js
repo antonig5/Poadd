@@ -31,7 +31,6 @@ export default function CardGirls({ description, title, picture }) {
         <CardBody className="overflow-visible p-0">
           <a href={`/adds/${5}`}>
             <img
-              removeWrapper
               alt="Card background"
               className="z-0 w-full h-[300px] object-cover"
               src={picture}

@@ -1,4 +1,5 @@
 "use client";
+import Coments from "@/app/components/Coments";
 import PerfilUser from "@/app/components/PerfilUser";
 import PhotoCards from "@/app/components/Photo";
 import TabsTech from "@/app/components/TabsTech";
@@ -60,7 +61,7 @@ export default function AddsUSer({ params }) {
             {
               key: "experiencia",
               title: "Experiencias",
-              content: "este es una experiencia",
+              content: <Coments />,
             },
           ]}
         />

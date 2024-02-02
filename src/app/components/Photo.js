@@ -26,7 +26,6 @@ export default function PhotoCards({ pictures }) {
             </CardHeader>
             <CardBody className="overflow-visible p-0">
               <img
-                removeWrapper
                 alt="Card background"
                 className="z-0 w-full h-[300px] object-cover"
                 src={dato.picture}
