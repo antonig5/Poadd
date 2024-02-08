@@ -10,7 +10,9 @@ import {
   Input,
   Textarea,
 } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import useStoreAuth from "../zustand-state/store";
 
 export default function AddAdvertisement() {
   const [inputs, setInputs] = useState(["input-0"]);
@@ -51,6 +53,11 @@ export default function AddAdvertisement() {
       prevFileInfo.filter((file) => file.id !== id)
     );
   };
+  const router = useRouter();
+  const { token, userInfo, logout } = useStoreAuth();
+  if (!token) {
+    return router.push("/login");
+  }
   return (
     <>
       <div className=" sm:mx-auto  sm:w-full sm:max-w-sm ">
