@@ -1,52 +1,41 @@
 import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
+import { Register } from "../apiRequests/Users";
 
 export default function FormCreator() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordMatch, setPasswordMatch] = useState(true);
+  const HandleRegister = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const phone = formData.get("phone");
+    const nameUser = formData.get("nameUser");
+    const surname = formData.get("surname");
+    const nickname = formData.get("nickname");
 
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+    const rol = formData.get("rol") || "creator";
+    await Register({
+      email,
+      password,
+      phone,
+      nameUser,
+      surname,
+      nickname,
+      rol,
+    });
   };
 
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordBlur = () => {
-    if (confirmPassword !== "" && password !== confirmPassword) {
-      setPasswordMatch(false);
-    } else {
-      setPasswordMatch(true);
-    }
-  };
   return (
-    <form className="space-y-6" autocomplete="off">
-      <Input type="email" label="Correo" />
+    <form className="space-y-6" autoComplete="off" onSubmit={HandleRegister}>
+      <Input type="email" label="Correo" name="email" />
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-        <Input
-          type="password"
-          label="Contraseña"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        <Input
-          type="password"
-          label="Confirmar contraseña"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          onBlur={handleConfirmPasswordBlur}
-        />
+        <Input type="password" label="Contraseña" name="password" />
       </div>
 
-      {!passwordMatch && (
-        <p style={{ color: "red" }}>Las contraseñas no coinciden</p>
-      )}
-      <Input type="number" label="Celular" />
+      <Input type="number" label="Celular" name="phone" />
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-        <Input type="text" label="Nombre" />
-        <Input type="text" label="Apellido" />
+        <Input type="text" label="Nombre" name="nameUser" />
+        <Input type="text" label="Apellido" name="surname" />
       </div>
 
       <Button

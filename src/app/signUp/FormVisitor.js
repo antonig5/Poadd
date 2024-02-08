@@ -1,54 +1,43 @@
 import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
+import { Register } from "../apiRequests/Users";
 
 export default function FormVisitor() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordMatch, setPasswordMatch] = useState(true);
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const phone = formData.get("phone");
+    const nameUser = formData.get("nameUser");
+    const surname = formData.get("surname");
+    const nickname = formData.get("nickname");
+    const rol = formData.get("rol") || "visitor";
+    await Register({
+      email,
+      password,
+      phone,
+      nameUser,
+      surname,
+      nickname,
+      rol,
+    });
   };
 
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordBlur = () => {
-    if (confirmPassword !== "" && password !== confirmPassword) {
-      setPasswordMatch(false);
-    } else {
-      setPasswordMatch(true);
-    }
-  };
   return (
-    <form className="space-y-6">
-      <Input type="email" label="Correo" />
+    <form className="space-y-6" autoComplete="off" onSubmit={handleRegister}>
+      <Input type="email" label="Correo" name="email" />
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-        <Input
-          type="password"
-          label="Contraseña"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        <Input
-          type="password"
-          label="Confirmar contraseña"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          onBlur={handleConfirmPasswordBlur}
-        />
-      </div>
-      {!passwordMatch && (
-        <p style={{ color: "red" }}>Las contraseñas no coinciden</p>
-      )}
-      <Input type="number" label="Celular" />
-      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-        <Input type="text" label="Nombre" />
-        <Input type="text" label="Apellido" />
+        <Input type="password" label="Contraseña" name="password" />
       </div>
 
-      <Input type="text" label="Nickname(apodo)" />
+      <Input type="number" label="Celular" name="phone" />
+      <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+        <Input type="text" label="Nombre" name="nameUser" />
+        <Input type="text" label="Apellido" name="surname" />
+      </div>
+
+      <Input type="text" label="Nickname(apodo)" name="nickname" />
       <Button
         type="submit"
         color="secondary"
