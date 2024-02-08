@@ -27,3 +27,36 @@ export async function Login({ email, password }) {
     throw error;
   }
 }
+export const Register = async ({
+  email,
+  password,
+  phone,
+  nameUser,
+  surname,
+  nickname,
+  rol,
+}) => {
+  try {
+    return await fetch(`http://localhost:9090/user/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        phone,
+        nameUser,
+        surname,
+        nickname,
+        rol,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Success:", data);
+      });
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
