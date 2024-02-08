@@ -1,14 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
+
 import CardGirls from "./components/CardGirls";
-import useStoreAuth from "./zustand-state/store";
 
 export default function Home() {
-  const router = useRouter();
-  const { token, userInfo, logout } = useStoreAuth();
-  if (!token) {
-    return router.push("/login");
-  }
   return (
     <CardGirls
       description={"hola"}
