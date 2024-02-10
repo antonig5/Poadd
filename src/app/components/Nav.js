@@ -20,8 +20,13 @@ import { PoAddLogo } from "../icons/PoAdd.js";
 import { ChevronDown } from "../icons/Chevron.js";
 
 import ModalSearch from "./ModalSearch.js";
+import useStoreAuth from "../middleware/zustand-state/store/index.js";
+import { useRouter } from "next/navigation.js";
+import AvatarUser from "./AvatarUser.js";
 
 export default function MenuNav({ children }) {
+  const router = useRouter();
+  const { token, userInfo } = useStoreAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuItems = [
     { name: "Inicio", href: "/" },
@@ -90,14 +95,22 @@ export default function MenuNav({ children }) {
 
         <NavbarContent as="div" className="items-center" justify="end">
           <ModalSearch />
-          <NavbarItem className="hidden lg:flex">
-            <Link href="/login">Inicia sesion</Link>
-          </NavbarItem>
-          <NavbarItem className="hidden sm:flex gap-4">
-            <Button as={Link} color="primary" href="/signUp" variant="flat">
-              Registrate
-            </Button>
-          </NavbarItem>
+          {token ? (
+            <NavbarItem className="hidden lg:flex">
+              <AvatarUser />
+            </NavbarItem>
+          ) : (
+            <>
+              <NavbarItem className="hidden lg:flex">
+                <Link href="/login">Inicia sesion</Link>
+              </NavbarItem>
+              <NavbarItem className="hidden sm:flex gap-4">
+                <Button as={Link} color="primary" href="/signUp" variant="flat">
+                  Registrate
+                </Button>
+              </NavbarItem>{" "}
+            </>
+          )}
         </NavbarContent>
         <NavbarMenu>
           {menuItems.map((item, index) => (
