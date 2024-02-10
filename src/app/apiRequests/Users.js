@@ -1,9 +1,6 @@
 import { API_PORH } from "@/app/apiRequests/config";
-import useStoreAuth from "../zustand-state/store";
 
-export async function Login({ email, password }) {
-  const setToken = useStoreAuth((state) => state.setToken);
-  const setUserInfo = useStoreAuth((state) => state.setUserInfo);
+export async function Login({ email, password, setToken, setUserInfo }) {
   try {
     const response = await fetch(`http://localhost:9090/user/login`, {
       method: "POST",

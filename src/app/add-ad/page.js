@@ -12,12 +12,13 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import useStoreAuth from "../zustand-state/store";
+import useStoreAuth from "../middleware/zustand-state/store";
 
 export default function AddAdvertisement() {
   const [inputs, setInputs] = useState(["input-0"]);
   const [fileInfo, setFileInfo] = useState([]);
-
+  const { token } = useStoreAuth();
+  const router = useRouter();
   const handleAddInput = () => {
     setInputs((inputs) => [...inputs, `input-${inputs.length}`]);
   };
@@ -48,16 +49,15 @@ export default function AddAdvertisement() {
   };
 
   const handleRemoveImage = (id) => {
-    // Filtrar el estado para eliminar la imagen con el ID correspondiente
     setFileInfo((prevFileInfo) =>
       prevFileInfo.filter((file) => file.id !== id)
     );
   };
-  const router = useRouter();
-  const { token, userInfo, logout } = useStoreAuth();
+
   if (!token) {
     return router.push("/login");
   }
+
   return (
     <>
       <div className=" sm:mx-auto  sm:w-full sm:max-w-sm ">

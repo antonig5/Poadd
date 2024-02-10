@@ -11,8 +11,9 @@ import {
 import React, { useState } from "react";
 import { PoAddLogo } from "../icons/PoAdd";
 
-import useStoreAuth from "../zustand-state/store";
+import useStoreAuth from "../middleware/zustand-state/store";
 import { useRouter } from "next/navigation";
+import { Login } from "../apiRequests/Users";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -22,23 +23,16 @@ export default function LoginForm() {
 
   const hanledFormLogin = async (e) => {
     e.preventDefault();
-    const response = await fetch(`http://localhost:9090/user/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: email, password: password }),
-    });
-    const data = await response.json();
-    if (data.token) {
-      setToken(data.token);
-      setUserInfo(data.user);
-      console.log("Success:", data.token);
+    try {
+      await Login({
+        email: email,
+        password: password,
+        setToken: setToken,
+        setUserInfo: setUserInfo,
+      });
       router.push("/");
-    }
-    if (!data.token) {
-      console.error("Error:", data.error);
-      throw new Error(data.error);
+    } catch (error) {
+      alert(error);
     }
   };
 
@@ -69,6 +63,7 @@ export default function LoginForm() {
             <Input
               label="Correo"
               type="email"
+              name="email"
               variant="bordered"
               isInvalid={isInvalid}
               color={isInvalid ? "danger" : "success"}
@@ -79,6 +74,7 @@ export default function LoginForm() {
             <Input
               label="Contraseña"
               type="password"
+              name="password"
               required
               onChange={(e) => setPassword(e.target.value)}
             />
