@@ -4,7 +4,6 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CardHeader,
   Checkbox,
   Image,
   Input,
@@ -13,6 +12,8 @@ import {
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import useStoreAuth from "../middleware/zustand-state/store";
+import { toast } from "sonner";
+import Alert from "../components/Alert";
 
 export default function AddAdvertisement() {
   const [inputs, setInputs] = useState(["input-0"]);
@@ -33,13 +34,12 @@ export default function AddAdvertisement() {
       const reader = new FileReader();
       reader.onloadend = () => {
         newFileInfo.push({
-          id: Date.now(), // Identificador único para cada archivo
+          id: Date.now(),
           name: file.name,
           preview: reader.result,
         });
 
         if (newFileInfo.length === files.length) {
-          // Actualizar el estado con la nueva información del archivo
           setFileInfo((prevFileInfo) => [...prevFileInfo, ...newFileInfo]);
         }
       };
@@ -60,11 +60,13 @@ export default function AddAdvertisement() {
 
   return (
     <>
+      <Alert />
       <div className=" sm:mx-auto  sm:w-full sm:max-w-sm ">
-        <Card className="max-w-full w-[840px] h-[600px]  ">
+        <Card className="max-w-full w-[840px]  ">
           <CardBody className="overflow-auto">
             <form className="flex flex-col gap-4">
               <Textarea
+                required
                 label="Descripcion"
                 variant="bordered"
                 placeholder="Agrega una descripcion"
@@ -83,12 +85,14 @@ export default function AddAdvertisement() {
                 >
                   <Input label="Servicio" type="service" className="w-40" />
                   <Input label="Precio" type="number" className="w-40" />
-                  <button
-                    type="button"
+
+                  <Button
+                    isIconOnly
+                    color="danger"
                     onClick={() => handleRemoveInput(inputId)}
                   >
                     X
-                  </button>
+                  </Button>
                 </div>
               ))}
               <Button
