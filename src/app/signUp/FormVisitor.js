@@ -1,27 +1,33 @@
 import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Register } from "../apiRequests/Users";
+import { useRouter } from "next/navigation";
 
 export default function FormVisitor() {
+  const router = useRouter();
   const handleRegister = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const phone = formData.get("phone");
-    const nameUser = formData.get("nameUser");
-    const surname = formData.get("surname");
-    const nickname = formData.get("nickname");
-    const rol = formData.get("rol") || "visitor";
-    await Register({
-      email,
-      password,
-      phone,
-      nameUser,
-      surname,
-      nickname,
-      rol,
-    });
+    try {
+      const formData = new FormData(e.target);
+      const email = formData.get("email");
+      const password = formData.get("password");
+      const phone = formData.get("phone");
+      const nameUser = formData.get("nameUser");
+      const surname = formData.get("surname");
+      const nickname = formData.get("nickname");
+      const rol = formData.get("rol") || "visitor";
+      await Register({
+        email,
+        password,
+        phone,
+        nameUser,
+        surname,
+        nickname,
+        rol,
+      });
+    } catch (error) {
+      router.push("/login");
+    }
   };
 
   return (
