@@ -12,19 +12,54 @@ import {
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import useStoreAuth from "../middleware/zustand-state/store";
-import { toast } from "sonner";
 import Alert from "../components/Alert";
+import { toast } from "sonner";
+import { Created } from "../apiRequests/Ads";
 
 export default function AddAdvertisement() {
-  const [inputs, setInputs] = useState(["input-0"]);
+  const [inputs, setInputs] = useState([
+    { id: `input-0`, service: "", price: "" },
+  ]);
+
   const [fileInfo, setFileInfo] = useState([]);
-  const { token } = useStoreAuth();
+  const [featured, setFeatured] = useState(false);
+  const { token, userInfo } = useStoreAuth();
   const router = useRouter();
-  const handleAddInput = () => {
-    setInputs((inputs) => [...inputs, `input-${inputs.length}`]);
+  const CreatedAds = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData(e.target);
+      const description = formData.get("description");
+      await Created({
+        description,
+        service: inputs,
+        picture: fileInfo,
+        featured,
+        userId: userInfo._id,
+      });
+
+      toast.success("Anuncio creado con exito");
+    } catch (error) {
+      toast.error("Error al crear el anuncio");
+    }
   };
+  const handleAddInput = () => {
+    setInputs((inputs) => [
+      ...inputs,
+      { id: `input-${inputs.length}`, service: "", price: "" },
+    ]);
+  };
+
+  const handleInputChange = (inputId, field, value) => {
+    setInputs((inputs) =>
+      inputs.map((input) =>
+        input.id === inputId ? { ...input, [field]: value } : input
+      )
+    );
+  };
+
   const handleRemoveInput = (inputId) => {
-    setInputs((inputs) => inputs.filter((input) => input !== inputId));
+    setInputs((inputs) => inputs.filter((input) => input.id !== inputId));
   };
   const handleFileChange = (event) => {
     const files = event.target.files;
@@ -64,8 +99,9 @@ export default function AddAdvertisement() {
       <div className=" sm:mx-auto  sm:w-full sm:max-w-sm ">
         <Card className="max-w-full w-[840px]  ">
           <CardBody className="overflow-auto">
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={CreatedAds}>
               <Textarea
+                name="description"
                 required
                 label="Descripcion"
                 variant="bordered"
@@ -78,21 +114,38 @@ export default function AddAdvertisement() {
                 }}
               />
 
-              {inputs.map((inputId) => (
+              {inputs.map((input, index) => (
                 <div
-                  key={inputId}
+                  key={input.id}
                   className="flex w-full flex-wrap md:flex-nowrap gap-4"
                 >
-                  <Input label="Servicio" type="service" className="w-40" />
-                  <Input label="Precio" type="number" className="w-40" />
-
-                  <Button
-                    isIconOnly
-                    color="danger"
-                    onClick={() => handleRemoveInput(inputId)}
-                  >
-                    X
-                  </Button>
+                  <Input
+                    type="text"
+                    placeholder="Servicio"
+                    value={input.service}
+                    onChange={(e) =>
+                      handleInputChange(input.id, "service", e.target.value)
+                    }
+                    className="w-40"
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Precio"
+                    value={input.price}
+                    onChange={(e) =>
+                      handleInputChange(input.id, "price", e.target.value)
+                    }
+                    className="w-40"
+                  />
+                  {inputs.length > 1 ? (
+                    <Button
+                      color="danger"
+                      isIconOnly
+                      onClick={() => handleRemoveInput(input.id)}
+                    >
+                      X
+                    </Button>
+                  ) : null}
                 </div>
               ))}
               <Button
@@ -134,7 +187,9 @@ export default function AddAdvertisement() {
                   </div>
                 ))}
               </div>
-              <Checkbox>¿Desea destacar este anuncio?</Checkbox>
+              <Checkbox onChange={(e) => setFeatured(e.target.checked)}>
+                ¿Desea destacar este anuncio?
+              </Checkbox>
 
               <Button color="primary" type="submit">
                 Crear Anuncio
