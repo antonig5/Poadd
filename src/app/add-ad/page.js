@@ -36,9 +36,11 @@ export default function AddAdvertisement() {
         picture: fileInfo,
         featured,
         userId: userInfo._id,
+        toast: toast,
+        token: token,
       });
 
-      toast.success("Anuncio creado con exito");
+      console.log(fileInfo);
     } catch (error) {
       toast.error("Error al crear el anuncio");
     }
@@ -69,9 +71,7 @@ export default function AddAdvertisement() {
       const reader = new FileReader();
       reader.onloadend = () => {
         newFileInfo.push({
-          id: Date.now(),
           name: file.name,
-          preview: reader.result,
         });
 
         if (newFileInfo.length === files.length) {
@@ -99,7 +99,12 @@ export default function AddAdvertisement() {
       <div className=" sm:mx-auto  sm:w-full sm:max-w-sm ">
         <Card className="max-w-full w-[840px]  ">
           <CardBody className="overflow-auto">
-            <form className="flex flex-col gap-4" onSubmit={CreatedAds}>
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={CreatedAds}
+              enctype="multipart/form-data"
+              method="POST"
+            >
               <Textarea
                 name="description"
                 required
@@ -158,21 +163,21 @@ export default function AddAdvertisement() {
 
               <Input
                 type="file"
-                accept=".jpg, .jpeg, .png"
-                onChange={handleFileChange}
-                multiple
+                multiple={true}
+                name="picture"
+                id="picture"
                 className="w-60"
               />
-              <div className="gap-2 grid grid-cols-2 sm:grid-cols-3">
-                {fileInfo.map((file) => (
-                  <div key={file.id}>
+              {/* <div className="gap-2 grid grid-cols-2 sm:grid-cols-3">
+                {fileInfo.map((file, index) => (
+                  <div key={index}>
                     <Card>
                       <CardBody className="overflow-visible p-0">
                         <Image
                           radius="lg"
                           className="w-full object-cover h-[140px]"
-                          src={file.preview}
-                          alt={`Preview ${file.id}`}
+                          src={file.name}
+                          alt="Card background"
                         />
                       </CardBody>
                       <CardFooter className="text-small justify-between">
@@ -186,7 +191,7 @@ export default function AddAdvertisement() {
                     </Card>
                   </div>
                 ))}
-              </div>
+              </div> */}
               <Checkbox onChange={(e) => setFeatured(e.target.checked)}>
                 ¿Desea destacar este anuncio?
               </Checkbox>

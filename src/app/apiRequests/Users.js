@@ -1,6 +1,13 @@
 import { API_PORH } from "@/app/apiRequests/config";
 
-export async function Login({ email, password, setToken, setUserInfo }) {
+export async function Login({
+  email,
+  password,
+  setToken,
+  setUserInfo,
+  toast,
+  router,
+}) {
   try {
     const response = await fetch(`http://localhost:9090/user/login`, {
       method: "POST",
@@ -13,15 +20,14 @@ export async function Login({ email, password, setToken, setUserInfo }) {
     if (data.token) {
       setToken(data.token);
       setUserInfo(data.user);
-      console.log("Success:", data.token);
+      router.push("/");
     }
     if (!data.token) {
       console.error("Error:", data.error);
-      throw new Error(data.error);
+      toast.error(data.message);
     }
   } catch (error) {
     console.error("Error:", error);
-    throw error;
   }
 }
 export const Register = async ({
@@ -52,6 +58,23 @@ export const Register = async ({
       .then((res) => res.json())
       .then((data) => {
         console.log("Success:", data);
+      });
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+export const GetUser = async (id) => {
+  try {
+    return await fetch(`http://localhost:9090/user/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        return data;
       });
   } catch (error) {
     console.log("Error:", error);

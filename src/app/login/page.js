@@ -14,6 +14,8 @@ import { PoAddLogo } from "../icons/PoAdd";
 import useStoreAuth from "../middleware/zustand-state/store";
 import { useRouter } from "next/navigation";
 import { Login } from "../apiRequests/Users";
+import Alert from "../components/Alert";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -29,8 +31,9 @@ export default function LoginForm() {
         password: password,
         setToken: setToken,
         setUserInfo: setUserInfo,
+        toast: toast,
+        router: router,
       });
-      router.push("/");
     } catch (error) {
       alert(error);
     }
@@ -49,6 +52,7 @@ export default function LoginForm() {
 
   return (
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <Alert />
       <Card>
         <CardHeader className="flex items-center justify-center">
           <PoAddLogo />
