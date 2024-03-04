@@ -18,26 +18,31 @@ import {
 import { PoAddLogo } from "../icons/PoAdd.js";
 
 import { ChevronDown } from "../icons/Chevron.js";
-
 import ModalSearch from "./ModalSearch.js";
 import useStoreAuth from "../middleware/zustand-state/store/index.js";
 import { useRouter } from "next/navigation.js";
 import AvatarUser from "./AvatarUser.js";
+import Alert from "./Alert.js";
 
 export default function MenuNav({ children }) {
   const router = useRouter();
-  const { token, userInfo } = useStoreAuth();
+  const { token, userInfo, isTokenValid, logout } = useStoreAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const menuItems = [
     { name: "Inicio", href: "/" },
     { name: "Agregar anuncio", href: "/add-ad" },
     { name: "Categorías", dropdown: ["Asiatica", "Latina", "Morena"] },
-    { name: "Registrate", href: "/signUp" },
-    { name: "Iniciar sesion", href: "/login" },
+    !token ? { name: "Registrate", href: "/signUp" } : null,
+    { name: token ? userInfo.nameUser : "Iniciar sesion", href: "/login" },
   ];
+  if (!isTokenValid) {
+    return logout();
+  }
 
   return (
     <>
+      <Alert />
       <Navbar isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle
@@ -95,7 +100,7 @@ export default function MenuNav({ children }) {
 
         <NavbarContent as="div" className="items-center" justify="end">
           <ModalSearch />
-          {token ? (
+          {token && isTokenValid ? (
             <NavbarItem className="hidden lg:flex">
               <AvatarUser />
             </NavbarItem>
@@ -115,7 +120,7 @@ export default function MenuNav({ children }) {
         <NavbarMenu>
           {menuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
-              {item.dropdown ? (
+              {item && item.dropdown ? (
                 <Dropdown>
                   <DropdownTrigger>
                     <Button
@@ -143,10 +148,10 @@ export default function MenuNav({ children }) {
                       ? "secundary"
                       : "foreground"
                   }
-                  href={item.href}
+                  href={item && item.href}
                   size="lg"
                 >
-                  {item.name}
+                  {item && item.name}
                 </Link>
               )}
             </NavbarMenuItem>

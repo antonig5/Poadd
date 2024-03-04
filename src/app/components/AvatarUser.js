@@ -9,6 +9,7 @@ import {
 } from "@nextui-org/react";
 import useStoreAuth from "../middleware/zustand-state/store";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function AvatarUser() {
   const router = useRouter();
@@ -24,8 +25,8 @@ export default function AvatarUser() {
               src: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
             }}
             className="transition-transform"
-            description="@tonyreichert"
-            name="Tony Reichert"
+            description="Admin"
+            name={`${userInfo.nameUser} ${userInfo.surname}`}
           />
         </DropdownTrigger>
         <DropdownMenu aria-label="User Actions" variant="flat">
@@ -33,7 +34,7 @@ export default function AvatarUser() {
             <p className="font-bold">Signed in as</p>
             <p className="font-bold">@tonyreichert</p>
           </DropdownItem>
-          <DropdownItem key="settings">My Settings</DropdownItem>
+          <DropdownItem key="profile"><Link href="/Profile">Mi perfil</Link></DropdownItem>
           <DropdownItem key="team_settings">Team Settings</DropdownItem>
           <DropdownItem key="analytics">Analytics</DropdownItem>
           <DropdownItem key="system">System</DropdownItem>

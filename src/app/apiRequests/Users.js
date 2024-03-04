@@ -23,11 +23,11 @@ export async function Login({
       router.push("/");
     }
     if (!data.token) {
-      console.error("Error:", data.error);
+     
       toast.error(data.message);
     }
   } catch (error) {
-    console.error("Error:", error);
+    toast.error(error.message);
   }
 }
 export const Register = async ({
@@ -38,6 +38,8 @@ export const Register = async ({
   surname,
   nickname,
   rol,
+  toast,
+  router,
 }) => {
   try {
     return await fetch(`http://localhost:9090/user/register`, {
@@ -57,10 +59,16 @@ export const Register = async ({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        if (data.error) {
+          toast.error("Error al crear el usuario");
+        }
+        if (data.message) {
+          toast.success("Usuario creado con exito");
+          router.push("/login");
+        }
       });
   } catch (error) {
-    console.log("Error:", error);
+    toast.error("Error al crear el usuario");
   }
 };
 

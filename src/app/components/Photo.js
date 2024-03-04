@@ -5,11 +5,13 @@ import { HeartIcon } from "../icons/HeartIcon";
 
 export default function PhotoCards({ pictures }) {
   const [like, setLike] = useState(false);
+ 
   return (
     <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-      {pictures.map((dato) => {
+      {pictures && pictures.map((dato, index) => {
+      
         return (
-          <Card key={dato.key} isFooterBlurred>
+          <Card key={index} isFooterBlurred>
             <CardHeader className="absolute z-10 top-1 flex-col !items-start">
               <Button
                 key={dato.key}
@@ -28,7 +30,7 @@ export default function PhotoCards({ pictures }) {
               <img
                 alt="Card background"
                 className="z-0 w-full h-[300px] object-cover"
-                src={dato.picture}
+                src={`http://localhost:9090/${dato}`}
               />
             </CardBody>
           </Card>

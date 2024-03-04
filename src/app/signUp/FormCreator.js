@@ -2,7 +2,7 @@ import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Register } from "../apiRequests/Users";
 import { useRouter } from "next/navigation";
-
+import { toast } from "sonner";
 export default function FormCreator() {
   const router = useRouter();
   const HandleRegister = async (e) => {
@@ -25,6 +25,9 @@ export default function FormCreator() {
         surname,
         nickname,
         rol,
+
+        toast,
+        router,
       });
     } catch (error) {
       router.push("/login");

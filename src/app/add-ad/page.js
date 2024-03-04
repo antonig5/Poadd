@@ -22,9 +22,11 @@ export default function AddAdvertisement() {
   ]);
 
   const [fileInfo, setFileInfo] = useState([]);
+  const [filePreview, setFilePreview] = useState([]);
   const [featured, setFeatured] = useState(false);
   const { token, userInfo } = useStoreAuth();
   const router = useRouter();
+
   const CreatedAds = async (e) => {
     e.preventDefault();
     try {
@@ -33,18 +35,17 @@ export default function AddAdvertisement() {
       await Created({
         description,
         service: inputs,
-        picture: fileInfo,
+        files: fileInfo,
         featured,
         userId: userInfo._id,
         toast: toast,
         token: token,
       });
-
-      console.log(fileInfo);
     } catch (error) {
       toast.error("Error al crear el anuncio");
     }
   };
+
   const handleAddInput = () => {
     setInputs((inputs) => [
       ...inputs,
@@ -65,20 +66,32 @@ export default function AddAdvertisement() {
   };
   const handleFileChange = (event) => {
     const files = event.target.files;
-    const newFileInfo = [];
+    const fileInfoWithPreview = [];
 
+    // Convertimos el FileList en un array para poder iterar sobre él
     Array.from(files).forEach((file) => {
+      // Usamos FileReader para leer el contenido del archivo
       const reader = new FileReader();
-      reader.onloadend = () => {
-        newFileInfo.push({
+
+      reader.onload = (e) => {
+        // Cuando el archivo ha sido leído, guardamos la información necesaria
+        fileInfoWithPreview.push({
+          id: file.id,
           name: file.name,
+          preview: e.target.result, // La URL base64 de la imagen
         });
 
-        if (newFileInfo.length === files.length) {
-          setFileInfo((prevFileInfo) => [...prevFileInfo, ...newFileInfo]);
+        // Actualizamos el estado solo cuando todos los archivos han sido procesados
+        if (fileInfoWithPreview.length === files.length) {
+          setFileInfo((prevFiles) => [...prevFiles, ...files]);
+          setFilePreview((prevPreviews) => [
+            ...prevPreviews,
+            ...fileInfoWithPreview,
+          ]);
         }
       };
 
+      // Leer el archivo como Data URL para obtener una vista previa
       reader.readAsDataURL(file);
     });
   };
@@ -161,22 +174,23 @@ export default function AddAdvertisement() {
                 Agregar servicio
               </Button>
 
-              <Input
+              <input
                 type="file"
                 multiple={true}
                 name="picture"
                 id="picture"
+                onChange={handleFileChange}
                 className="w-60"
               />
-              {/* <div className="gap-2 grid grid-cols-2 sm:grid-cols-3">
-                {fileInfo.map((file, index) => (
+              <div className="gap-2 grid grid-cols-2 sm:grid-cols-3">
+                {filePreview.map((file, index) => (
                   <div key={index}>
                     <Card>
                       <CardBody className="overflow-visible p-0">
                         <Image
                           radius="lg"
                           className="w-full object-cover h-[140px]"
-                          src={file.name}
+                          src={file.preview}
                           alt="Card background"
                         />
                       </CardBody>
@@ -191,7 +205,7 @@ export default function AddAdvertisement() {
                     </Card>
                   </div>
                 ))}
-              </div> */}
+              </div>
               <Checkbox onChange={(e) => setFeatured(e.target.checked)}>
                 ¿Desea destacar este anuncio?
               </Checkbox>

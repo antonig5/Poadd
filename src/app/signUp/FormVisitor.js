@@ -2,6 +2,7 @@ import { Button, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Register } from "../apiRequests/Users";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function FormVisitor() {
   const router = useRouter();
@@ -24,6 +25,9 @@ export default function FormVisitor() {
         surname,
         nickname,
         rol,
+
+        toast,
+        router,
       });
     } catch (error) {
       router.push("/login");
