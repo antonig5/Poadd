@@ -69,7 +69,7 @@ export default function CardGirls() {
                 <a href={`/adds/${dato._id}`}>
                   <img
                     alt={`Card background `}
-                    className="w-full h-[300px] object-cover"
+                    className="w-full h-[400px] object-cover"
                     src={`http://localhost:9090/${dato.photos.picture.picture[0]}`}
                   />
                 </a>
