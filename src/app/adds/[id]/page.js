@@ -42,7 +42,6 @@ export default function AddsUSer({ params }) {
     <>
       {ads &&
         ads.map((dato, index) => {
-          console.log("Ad:", dato);
           return (
             <div key={index}>
               <Title
@@ -74,7 +73,7 @@ export default function AddsUSer({ params }) {
                     {
                       key: "experiencia",
                       title: "Experiencias",
-                      content: <Coments />,
+                      content: <Coments id={id} />,
                     },
                   ]}
                 />

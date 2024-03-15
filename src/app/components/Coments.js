@@ -12,26 +12,43 @@ import React, { useEffect, useState } from "react";
 import { CreatedComment, GetComments } from "../apiRequests/comments";
 import Empty from "./Empty";
 import useStoreAuth from "../middleware/zustand-state/store";
+import { GetUser } from "../apiRequests/Users";
 
-export default function Comments() {
+export default function Comments({ id }) {
   const { token, userInfo } = useStoreAuth();
   const [showComments, setShowComments] = useState([]);
   const AllComments = async () => {
     try {
-      const comments = await GetComments();
-      setShowComments(comments);
+      const comments = await GetComments({ id });
+      const commentsWithUser = await Promise.all(
+        comments.comments.map(async (comment) => {
+          const userResponse = await GetUser(comment.userId);
+          return {
+            ...comment,
+            user: userResponse.user,
+          };
+        })
+      );
+      setShowComments(commentsWithUser);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const Created = async () => {
+  console.log(showComments);
+  const Created = async (e) => {
+    e.preventDefault();
     try {
+      const formdata = new FormData(e.target);
+      const comment = formdata.get("comment");
       await CreatedComment({
         userId: userInfo._id,
-        adId: 1,
+        addId: id,
+        comment: comment,
       });
-    } catch (error) {}
+      AllComments();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -42,19 +59,28 @@ export default function Comments() {
     <>
       <div className="overflow-auto max-h-[500px]">
         <h1 className="text-3xl font-semibold ">Comentarios</h1>
-        {showComments.length > 0 ? (
-          showComments.map((comment, index) => (
+        {showComments?.length > 0 ? (
+          showComments?.map((comment, index) => (
             <ScrollShadow key={index}>
               <Card className="m-7">
                 <CardBody>
                   <div className="flex gap-3">
-                    <Avatar size="lg" name="Junior" />{" "}
-                    <h3 className="text-xl font-semibold pt-2">User2323</h3>
+                    <Avatar
+                      size="lg"
+                      name={
+                        comment.user.rol === "creator"
+                          ? `${comment.user.nameUser} ${comment.user.surname}`
+                          : comment.user.nickname
+                      }
+                    />{" "}
+                    <h3 className="text-xl font-semibold pt-2">
+                      {comment.user.rol === "creator"
+                        ? `${comment.user.nameUser} ${comment.user.surname}`
+                        : comment.user.nickname}
+                    </h3>
                   </div>
                   <div className="m-4">
-                    <p>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    </p>
+                    <p>{comment.comment}</p>
                   </div>
                 </CardBody>
                 <CardFooter className="flex gap-4">
@@ -74,9 +100,16 @@ export default function Comments() {
         )}
       </div>
       <div>
-        <form>
-          <Textarea placeholder="Escribe un comentario" className="mb-3" />
-          <Button color="primary">Comentar</Button>
+        <form onSubmit={Created} method="POST">
+          <Textarea
+            id="comment"
+            name="comment"
+            placeholder="Escribe un comentario"
+            className="mb-3"
+          />
+          <Button type="submit" color="primary">
+            Comentar
+          </Button>
         </form>
       </div>
     </>

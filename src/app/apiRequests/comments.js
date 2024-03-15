@@ -1,6 +1,6 @@
-export const GetComments = async () => {
+export const GetComments = async ({ id }) => {
   try {
-    return await fetch(`http://localhost:9090/comments`, {
+    return await fetch(`http://localhost:9090/comments/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -14,14 +14,14 @@ export const GetComments = async () => {
     console.log("Error:", error);
   }
 };
-export const CreatedComment = async ({ comment, userId, adId, toast }) => {
+export const CreatedComment = async ({ comment, userId, addId, toast }) => {
   try {
     return await fetch(`http://localhost:9090/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ comment, userId, adId }),
+      body: JSON.stringify({ comment, userId, addId }),
     })
       .then((res) => res.json())
       .then((data) => {
